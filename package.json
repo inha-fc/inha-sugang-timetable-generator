@@ -1,22 +1,24 @@
 {
   "name": "my-inha-sugang",
-  "version": "0.2.1",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "fetch": "node init",
-    "dev": "nuxt"
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "fetch": "node init.js"
   },
-  "author": "korbots@gmail.com",
-  "license": "ISC",
+  "devDependencies": {
+    "axios": "^1.13.6",
+    "cheerio": "^1.2.0",
+    "iconv-lite": "^0.7.2",
+    "nuxt": "3.15.4",
+    "vite": "6.2.0"
+  },
   "dependencies": {
-    "@nuxtjs/google-analytics": "^2.1.0",
-    "fs-extra": "^7.0.1",
-    "inha-timetable": "^1.0.6",
-    "nuxt": "^2.8.1",
-    "push-dir": "^0.4.1",
-    "request": "^2.88.0",
-    "v-suggest": "^1.1.3"
+    "fs-extra": "^11.3.4"
   }
 }

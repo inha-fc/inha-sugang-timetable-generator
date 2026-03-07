@@ -1,28 +1,88 @@
 <template>
-  <!-- 희망과목, 필수과목 분반 선택을 도와줍니다. -->
   <div id="subject-selector">
+    <div v-if="modelValue.length > 0" class="selected-subjects mb-4">
+      <h3 class="title is-6">선택된 과목/분반</h3>
+      <table class="table is-narrow is-fullwidth is-bordered">
+        <thead>
+          <tr class="is-selected">
+            <th>{{string_resources.SNO}}</th>
+            <th>{{string_resources.SUBJECT}}</th>
+            <th>{{string_resources.DEPARTMENT}}</th>
+            <th>{{string_resources.GRADE}}</th>
+            <th>{{string_resources.CREDIT}}</th>
+            <th>{{string_resources.CATEGORY}}</th>
+            <th>기타 정보</th>
+            <th>작업</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(cell, i) in modelValue" :key="i" class="is-selected">
+            <template v-if="cell.code.indexOf('-') == -1">
+              <td>{{cell.code}}</td>
+              <td>{{cell.detail.subject}}</td>
+              <td>{{cell.detail.deptName}}</td>
+              <td>{{cell.detail.grade}}</td>
+              <td>{{cell.detail.credit}}</td>
+              <td>{{cell.detail.category}}</td>
+              <td></td>
+              <td>
+                <div class="buttons has-addons">
+                  <button class="button is-small is-danger is-inverted" @click="희망과목_삭제(cell.code)">해제</button>
+                  <button
+                    @click="필수과목_토글(cell.code)"
+                    class="button is-small"
+                    :class="{'is-link': cell.important}"
+                  >{{string_resources.IS_REQUIRED}}({{cell.important?'O':'X'}})</button>
+                </div>
+              </td>
+            </template>
+            <template v-else>
+              <td>{{cell.code}}</td>
+              <td>{{cell.detail.subject}}</td>
+              <td>{{cell.detail.deptName}}</td>
+              <td>{{cell.detail.grade}}</td>
+              <td>{{cell.detail.credit}}</td>
+              <td>{{cell.detail.category}}</td>
+              <td>{{cell.detail.time}} / {{cell.detail.name_pf}}</td>
+              <td>
+                <div class="buttons has-addons">
+                  <button class="button is-small is-danger is-inverted" @click="희망분반_삭제(cell.code)">해제</button>
+                  <button
+                    @click="필수과목_토글(cell.code)"
+                    class="button is-small"
+                    :class="{'is-link': cell.important}"
+                  >{{string_resources.IS_REQUIRED}}({{cell.important?'O':'X'}})</button>
+                </div>
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="title is-6">검색 결과</h3>
     <table class="table is-narrow is-hoverable is-fullwidth">
       <thead>
-        <th>{{string_resources.SNO}}</th>
-        <th>{{string_resources.SUBJECT}}</th>
-        <th>{{string_resources.DEPARTMENT}}</th>
-        <th>{{string_resources.GRADE}}</th>
-        <th>{{string_resources.CREDIT}}</th>
-        <th>{{string_resources.CATEGORY}}</th>
-        <th>{{string_resources.TIME}}</th>
-        <th>{{string_resources.PLACE}}</th>
-        <th>{{string_resources.PROFESSOR}}</th>
-        <th>{{string_resources.RATE}}</th>
-        <th>{{string_resources.REMARK}}</th>
-        <th></th>
+        <tr>
+          <th>{{string_resources.SNO}}</th>
+          <th>{{string_resources.SUBJECT}}</th>
+          <th>{{string_resources.DEPARTMENT}}</th>
+          <th>{{string_resources.GRADE}}</th>
+          <th>{{string_resources.CREDIT}}</th>
+          <th>{{string_resources.CATEGORY}}</th>
+          <th>{{string_resources.TIME}}</th>
+          <th>{{string_resources.PLACE}}</th>
+          <th>{{string_resources.PROFESSOR}}</th>
+          <th>{{string_resources.RATE}}</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
-        <!-- 선택가능 과목들 -->
         <tr v-if="list_page.length == 0">
-          <td colspan="11" class="is-centered">{{string_resources.NO_RESULT_OF_CONDITION}}</td>
+          <td colspan="11" class="has-text-centered">{{string_resources.NO_RESULT_OF_CONDITION}}</td>
         </tr>
 
-        <tr v-else v-for="(cell, i) in list_page" :key="i+value.length">
+        <tr v-else v-for="(cell, i) in list_page" :key="i">
           <td>{{cell.sno}}</td>
           <td>{{cell.subject}}</td>
           <td>{{cell.deptName}}</td>
@@ -33,70 +93,20 @@
           <td>{{cell.place}}</td>
           <td>{{cell.name_pf}}</td>
           <td>{{cell.rate}}</td>
-          <td>{{cell.bigo}}</td>
           <td>
             <div class="buttons has-addons">
               <button
-                :disabled="value.map(x=>x.code).indexOf(cell.sno.substring(0,7)) != -1"
-                class="button is-small"
+                :disabled="modelValue.map(x=>x.code).indexOf(cell.sno.substring(0,7)) != -1"
+                class="button is-small is-primary is-outlined"
                 @click="희망과목_추가(cell)"
               >{{string_resources.SELECT_SUBJECT}}</button>
               <button
-                :disabled="value.map(x=>x.code).indexOf(cell.sno) != -1"
-                class="button is-small"
+                :disabled="modelValue.map(x=>x.code).indexOf(cell.sno) != -1"
+                class="button is-small is-info is-outlined"
                 @click="희망분반_추가(cell)"
               >{{string_resources.SELECT_THE_CLASS}}</button>
             </div>
           </td>
-        </tr>
-        <!-- 희망과목들 -->
-        <tr v-for="(cell, i) in value" :key="i" class="is-selected">
-          <template v-if="cell.code.indexOf('-') == -1">
-            <td>{{cell.code}}</td>
-            <td>{{cell.detail.subject}}</td>
-            <td>{{cell.detail.deptName}}</td>
-            <td>{{cell.detail.grade}}</td>
-            <td>{{cell.detail.credit}}</td>
-            <td>{{cell.detail.category}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <div class="buttons has-addons">
-                <button class="button is-small" @click="희망과목_삭제(cell.code)">해당 과목 선택해제</button>
-                <button
-                  @click="필수과목_토글(cell.code)"
-                  class="button is-small"
-                  :class="{'is-link': cell.important}"
-                >{{string_resources.IS_REQUIRED}}({{cell.important?'O':'X'}})</button>
-              </div>
-            </td>
-          </template>
-          <template v-else>
-            <td>{{cell.code}}</td>
-            <td>{{cell.detail.subject}}</td>
-            <td>{{cell.detail.deptName}}</td>
-            <td>{{cell.detail.grade}}</td>
-            <td>{{cell.detail.credit}}</td>
-            <td>{{cell.detail.category}}</td>
-            <td>{{cell.detail.time}}</td>
-            <td>{{cell.detail.place}}</td>
-            <td>{{cell.detail.name_pf}}</td>
-            <td>{{cell.detail.rate}}</td>
-            <td>{{cell.detail.bigo}}</td>
-            <td>
-              <div class="buttons has-addons">
-                <button class="button is-small" @click="희망분반_삭제(cell.code)">해당 분반 선택해제</button>
-                <button
-                  @click="필수과목_토글(cell.code)"
-                  class="button is-small"
-                  :class="{'is-link': cell.important}"
-                >{{string_resources.IS_REQUIRED}}({{cell.important?'O':'X'}})</button>
-              </div>
-            </td>
-          </template>
         </tr>
       </tbody>
     </table>
@@ -107,128 +117,101 @@
     </div>
   </div>
 </template>
-<script>
-import 전공 from "../data/전공.json";
-import 일반교양 from "../data/일반교양.json";
-import 핵심교양 from "../data/핵심교양.json";
-import 영어 from "../data/영어.json";
-import 교양필수 from "../data/교양필수.json";
+
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
 import { 초성찾기 } from "../utils.js";
+import { useData } from "../composables/useData.js";
 import string_resources from "../resources/stringresources.js"
 
-export default {
-  name: "subject-selector",
-  props: ["category", "search", "value", "subject"],
-  created() {
-    this.string_resources = string_resources;
-    this.list = [...전공, ...일반교양, ...핵심교양, ...영어, ...교양필수];
-  },
-  watch: {
-    category() {
-      this.index = 0;
-    },
-    search() {
-      this.index = 0;
-    }
-  },
-  computed: {
-    // pagination
-    list_page() {
-      if (this.list_size < this.pagination) {
-        return this.filtered_list;
-      } else {
-        return this.filtered_list.slice(
-          this.index * this.pagination,
-          (this.index + 1) * this.pagination
-        );
-      }
-    },
-    list_size() {
-      return this.filtered_list.length;
-    },
-    max_page() {
-      return Math.floor(this.list_size / this.pagination);
-    },
-    // 필터는 여기서 다하기
-    filtered_list() {
-      let list = 초성찾기(this.list, this.search);
-      // 카테고리로 필터
-      if (this.category != "전체") {
-        list = list.filter(x => x.category == this.category);
-      }
-      list = list.filter(
-        x => x.deptName == undefined || x.deptName.indexOf(this.subject) != -1
-      );
-      return list;
-    }
-  },
-  methods: {
-    next_page() {
-      this.index = this.index == this.max_page ? this.max_page : this.index + 1;
-    },
-    previous_page() {
-      this.index = this.index == 0 ? 0 : this.index - 1;
-    },
-    필수과목_토글(코드) {
-      const index = this.value.map(x => x.code).indexOf(코드);
-      if (index != -1) {
-        this.value[index].important = !this.value[index].important;
-      }
-      this.$emit("change", this.value);
-    },
-    희망과목_삭제(과목코드) {
-      const index = this.value.map(x => x.code).indexOf(과목코드);
-      if (index != -1) {
-        this.value.splice(index, 1);
-      }
-      this.$emit("change", this.value);
-    },
-    희망분반_삭제(분반코드) {
-      const index = this.value.map(x => x.code).indexOf(분반코드);
-      if (index != -1) {
-        this.value.splice(index, 1);
-      }
-      this.$emit("change", this.value);
-    },
-    희망과목_추가(코드) {
-      // 같은 과목이 없을때
-      const 과목코드 = 코드.sno.match(/(.*)-(.*)/)[1];
-      if (!this.value.map(x => x.code).includes(과목코드)) {
-        this.value.push({
-          code: 과목코드,
-          detail: 코드,
-          important: true
-        });
-      }
-      this.$emit("change", this.value);
-    },
-    희망분반_추가(코드) {
-      const 과목코드 = 코드.sno.match(/(.*)-(.*)/)[1];
-      const 분반코드 = 코드.sno;
-      // 같은 분반 && 과목이 없을때
-      if (
-        !this.value.map(x => x.code).includes(분반코드) &&
-        !this.value.map(x => x.code).includes(과목코드)
-      ) {
-        this.value.push({
-          code: 분반코드,
-          detail: 코드,
-          important: true
-        });
-      }
-      this.$emit("change", this.value);
-    }
-  },
-  data() {
-    return {
-      list: [],
-      index: 0,
-      pagination: 12
-    };
+const props = defineProps(["category", "search", "modelValue", "subject"])
+const emit = defineEmits(["update:modelValue"])
+
+const { getSubjects } = useData()
+const list = ref([])
+const index = ref(0)
+const pagination = 12
+
+onMounted(async () => {
+  try {
+    list.value = await getSubjects()
+  } catch (e) {
+    console.error("Data loading failed", e)
   }
-};
+})
+
+watch(() => props.category, () => { index.value = 0 })
+watch(() => props.search, () => { index.value = 0 })
+
+const filtered_list = computed(() => {
+  let result = 초성찾기(list.value, props.search || "");
+  if (props.category && props.category !== "전체") {
+    result = result.filter(x => x.category === props.category);
+  }
+  if (props.subject) {
+    result = result.filter(x => x.deptName === undefined || x.deptName.indexOf(props.subject) !== -1);
+  }
+  return result;
+})
+
+const list_size = computed(() => filtered_list.value.length)
+const max_page = computed(() => Math.max(0, Math.floor((list_size.value - 1) / pagination)))
+
+const list_page = computed(() => {
+  if (list_size.value < pagination) return filtered_list.value;
+  return filtered_list.value.slice(index.value * pagination, (index.value + 1) * pagination);
+})
+
+const next_page = () => { index.value = Math.min(index.value + 1, max_page.value) }
+const previous_page = () => { index.value = Math.max(0, index.value - 1) }
+
+const 필수과목_토글 = (코드) => {
+  const newValue = [...props.modelValue]
+  const targetIndex = newValue.map(x => x.code).indexOf(코드)
+  if (targetIndex !== -1) {
+    newValue[targetIndex].important = !newValue[targetIndex].important
+    emit("update:modelValue", newValue)
+  }
+}
+
+const 희망과목_삭제 = (과목코드) => {
+  const newValue = props.modelValue.filter(x => x.code !== 과목코드)
+  emit("update:modelValue", newValue)
+}
+
+const 희망분반_삭제 = (분반코드) => {
+  const newValue = props.modelValue.filter(x => x.code !== 분반코드)
+  emit("update:modelValue", newValue)
+}
+
+const 희망과목_추가 = (코드) => {
+  const 과목코드 = 코드.sno.match(/(.*)-(.*)/)[1]
+  if (!props.modelValue.map(x => x.code).includes(과목코드)) {
+    const newValue = [...props.modelValue, {
+      code: 과목코드,
+      detail: 코드,
+      important: true
+    }]
+    emit("update:modelValue", newValue)
+  }
+}
+
+const 희망분반_추가 = (코드) => {
+  const 과목코드 = 코드.sno.match(/(.*)-(.*)/)[1]
+  const 분반코드 = 코드.sno
+  if (!props.modelValue.map(x => x.code).includes(분반코드) && 
+      !props.modelValue.map(x => x.code).includes(과목코드)) {
+    const newValue = [...props.modelValue, {
+      code: 분반코드,
+      detail: 코드,
+      important: true
+    }]
+    emit("update:modelValue", newValue)
+  }
+}
 </script>
-<style>
+
+<style scoped>
 #subject-selector {
   font-size: 0.8em;
 }
