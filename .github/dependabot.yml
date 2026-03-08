@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # npm 패키지 업데이트 설정
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    # 보안 업데이트는 기본적으로 활성화됨
+
+  # GitHub Actions 업데이트 설정
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
