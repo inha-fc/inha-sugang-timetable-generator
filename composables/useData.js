@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { getUpdatedDate, run, getAllSubjects } from '../index.js'
+import { getUpdatedDate, run, getAllSubjects } from '../utils/logic'
 import { useRuntimeConfig } from '#app'
 
 export const useData = () => {

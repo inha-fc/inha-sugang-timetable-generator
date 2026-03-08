@@ -1,4 +1,4 @@
-const string_resources = {
+export const string_resources = {
     SNO: "학수번호",
     SUBJECT: "과목이름",
     DEPARTMENT: "학과",
@@ -25,5 +25,3 @@ const string_resources = {
     CANNOT_SEE_ONE_VIEW: "표가 한 화면에 보이지 않으면 Ctrl +, -로 조정하세요",
     TOO_MANY_TIMETABLES: "경우의 수가 너무 많으면 최소학점/최대학점을 조절해보세요",
 };
-
-export default string_resources
