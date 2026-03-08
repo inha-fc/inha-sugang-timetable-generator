@@ -1,4 +1,4 @@
-# 📅 인하대학교 수강신청 시간표 생성기 (Nuxt 4)
+# ⏰ 인하대학교 수강신청 시간표 생성기 (Nuxt 4)
 
 [![Nuxt 4](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com/)
 [![Deploy to GitHub Pages](https://github.com/inha-fc/inha-sugang-timetable-generator/actions/workflows/deploy.yml/badge.svg)](https://github.com/inha-fc/inha-sugang-timetable-generator/actions/workflows/deploy.yml)
