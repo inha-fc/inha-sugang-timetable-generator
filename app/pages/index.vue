@@ -206,8 +206,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useData } from '~/composables/useData'
-import TimeTableViewer from '../components/TimeTableViewer.vue'
-import SubjectSelector from '../components/SubjectSelector.vue'
+import TimeTableViewer from '~/components/TimeTableViewer.vue'
+import SubjectSelector from '~/components/SubjectSelector.vue'
 
 const { date, fetchDate, run } = useData()
 const config = useRuntimeConfig()
